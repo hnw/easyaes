@@ -1,0 +1,25 @@
+{
+  "name": "@hnw/easyaes",
+  "version": "0.0.2",
+  "description": "Block cipher library for non-serious use",
+  "main": "easyaes.js",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hnw/easyaes.git"
+  },
+  "author": "hnw",
+  "license": "MIT",
+  "bin": {
+    "easyaes": "./bin/cli.js"
+  },
+  "devDependencies": {
+    "ava": "^2.2.0"
+  },
+  "dependencies": {
+    "yargs": "*"
+  },
+  "scripts": {
+    "test": "ava --verbose"
+  }
+}
