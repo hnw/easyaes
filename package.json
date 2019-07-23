@@ -1,6 +1,6 @@
 {
   "name": "@hnw/easyaes",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Block cipher library for non-serious use",
   "main": "easyaes.js",
   "private": false,
