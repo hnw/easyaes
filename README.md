@@ -8,7 +8,7 @@ Entering a raw password on the command line, in an environment variable, or in p
 
 In order to prevent the secret leakage, it is necessary to use encrypted strings in all plain text, and decrypt passwords only when a raw password is required.
 
-`EasyAes` provides easy-to-use encryption/decription library and command-line tools. `EasyAes` allows you to use encrypted strings in configuration files, environment variables, and command line.
+`EasyAes` provides easy-to-use encryption/decription library and command-line tools. This library allows you to use encrypted strings in configuration files, environment variables, and command line.
 
 ## Features
 
@@ -59,6 +59,6 @@ console.log(argv);
 ```
 
 ```
-$ test.js --encrypted=8EpauI1BBxvo8VzSeA3zsg==
+$ node test.js --encrypted=8EpauI1BBxvo8VzSeA3zsg==
 { _: [], encrypted: 'foobar', '$0': 'test.js' }
 ```

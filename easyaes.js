@@ -31,7 +31,7 @@ class EasyAes {
   constructor(spec) {
     let algorithm = '';
     let password = '';
-    if (typeof spec === 'string') {
+    if (spec === undefined || typeof spec === 'string') {
       password = String(spec || EasyAes.getPasswordFromFile());
       const cipherId = password[0];
       if (!CIPHER.hasOwnProperty(cipherId)) {
