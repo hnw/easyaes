@@ -6,9 +6,9 @@ Block cipher library for non-serious use
 
 Entering a raw password on the command line, in an environment variable, or in plain text can cause security issues.
 
-In order to prevent the secret leakage, it is necessary to use encrypted strings in all plain text, and decrypt passwords only when a raw password is required.
+In order to prevent the secret leakage, we should use encrypted strings in all plain text, and decrypt passwords only when a raw password is required.
 
-`EasyAes` provides easy-to-use encryption/decription library and command-line tools. This library allows you to use encrypted strings in configuration files, environment variables, and command line.
+`EasyAes` provides easy-to-use encryption/decription functions. This library allows you to use encrypted strings easily in configuration files, environment variables, and command line.
 
 ## Features
 
@@ -50,10 +50,10 @@ console.log(cipher.decrypt('8EpauI1BBxvo8VzSeA3zsg==')); // foobar
 ## Example 3
 
 ```javascript
-const EasyAes=require("@hnw/easyaes");
+const EasyAes = require("@hnw/easyaes");
+const cipher = new EasyAes();
 const yargs = require('yargs')
 let argv = yargs.argv;
-cipher = new EasyAes();
 argv = cipher.decrypt(argv);
 console.log(argv);
 ```
