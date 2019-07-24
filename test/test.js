@@ -1,7 +1,7 @@
 import test from 'ava';
 import EasyAes from '../easyaes';
 
-test('正常系テスト(string)', t => {
+test('復号(Blowfish)', t => {
   const cipher = new EasyAes('bfoo');
   t.is(cipher.decrypt('eHOxmiUiyV5ZzJwsWU/dOg=='), 'abc');
   t.is(cipher.decrypt('oIIbPyQtcnbc4delfaqMRQ=='), 'ほげ');
@@ -14,7 +14,33 @@ test('正常系テスト(string)', t => {
        'abcd');
 });
 
-test('正常系テスト(array)', t => {
+test('復号(AES)', t => {
+  const cipher = new EasyAes('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  t.is(cipher.decrypt('qV3VoJRYlvX8CZGAx6zUXmZFtCwuzbClTcUXCzKpGS1XDg=='),
+       'abc');
+  t.is(cipher.decrypt('4xmHW9ok0RBUL37TbBn07a9/5FbpxC/1Fz9HAvhPdx3Wdw=='),
+       'ほげ');
+  t.is(cipher.decrypt(
+    'CUaX4uVWa0xViwVqLj2WpqbNF5KWrn3Ia74CBzl4ugBEZAoLsapO4WYizmayJ4p27g=='
+  ), '1234567890abcdef');
+  t.is(cipher.decrypt(
+    'D21Upeafz0SaTYHjS2+aU5PA4vWG0EfOmKxgJXHQ3fHL3rZ0aKbg11qAfvf65GVlPg==',
+  ), 'abcdefghijklmnopqrstuvwxyz');
+});
+
+test('復号(3DES)', t => {
+  const cipher = new EasyAes('ddddddddddddddddddddddddd');
+  t.is(cipher.decrypt('h2WGwgKX0LQ9WfiLe2aALg=='), 'abc');
+  t.is(cipher.decrypt('YGBhM/CvP8w6Vex9wHRKsA=='), 'ほげ');
+  t.is(cipher.decrypt(
+    '066XlaG0v8sl3NcjlZG3aDx1bFKfIillR+7mdO3zdHvBZg=='
+  ), '1234567890abcdef');
+  t.is(cipher.decrypt(
+    'pL8NaKv6TN27Ky4/PDI7bHj9BFLnLnYGMH5GCXhD6rGPqGZyBhu9mA==',
+  ), 'abcdefghijklmnopqrstuvwxyz');
+});
+
+test('復号(array)', t => {
   const cipher = new EasyAes('bfoobarbaz');
   t.deepEqual(cipher.decrypt([
     'ae+vjmOwtAsh5EPUY6Spuw==',
@@ -23,7 +49,7 @@ test('正常系テスト(array)', t => {
   ]), ['foo', 'bar', 'baz']);
 });
 
-test('正常系テスト(object)', t => {
+test('復号(object)', t => {
   const cipher = new EasyAes('bfoobarbaz');
   t.deepEqual(cipher.decrypt({
     foo: 'eFaNA7Miqj0fpydR/BO6gw==',
@@ -54,4 +80,25 @@ test('OpenSSLエラーで死なない', t => {
   const cipher = new EasyAes('bbaz');
   t.is(cipher.decrypt('MTIzNDU2Nzg5MGFiY2RlCg=='), 'MTIzNDU2Nzg5MGFiY2RlCg==');
   t.is(cipher.decrypt('eHOxmiUiyV5ZzJwsWU/dOg=='), 'eHOxmiUiyV5ZzJwsWU/dOg==');
+});
+
+test('暗号化(AES)', t => {
+  const cipher = new EasyAes('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+  const encrypted = cipher.encrypt('abc');
+  t.regex(encrypted, /^[a-z0-9/+]{46}==$/i);
+  t.is(cipher.decrypt(encrypted), 'abc');
+});
+
+test('暗号化(Blowfish)', t => {
+  const cipher = new EasyAes('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+  const encrypted = cipher.encrypt('abc');
+  t.regex(encrypted, /^[a-z0-9/+]{22}==$/i);
+  t.is(cipher.decrypt(encrypted), 'abc');
+});
+
+test('暗号化(3DES)', t => {
+  const cipher = new EasyAes('ddddddddddddddddddddddddd');
+  const encrypted = cipher.encrypt('abc');
+  t.regex(encrypted, /^[a-z0-9/+]{22}==$/i);
+  t.is(cipher.decrypt(encrypted), 'abc');
 });
