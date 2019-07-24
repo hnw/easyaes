@@ -23,7 +23,9 @@ const mainLoop = (password) => {
   cipher = new EasyAes(password);
   rl.on("line", (str) => {
     if (argv.decrypt) {
-      console.log(cipher.decrypt(str));
+      const test = /(^|[^A-Za-z0-9/])(([A-Za-z0-9/+]{4})*[A-Za-z0-9/+]{2}==)/g;
+      const decrypted = str.replace(test, (_, p1, p2) => p1 + cipher.decrypt(p2));
+      console.log(decrypted);
     } else {
       console.log(cipher.encrypt(str));
     }
