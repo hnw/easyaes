@@ -3,46 +3,52 @@
 const crypto = require('crypto');
 const os = require('os');
 const fs = require('fs');
-const CIPHER = {
-  'b': 'bf-cbc',
-  'd': 'des-ede3-cbc',
-  'a': 'aes-256-cbc',
-}
 const CIPHER_ID = {
+  'aes': 'a',
   'bf': 'b',
   'blowfish': 'b',
   'des': 'd',
   '3des': 'd',
   'des3': 'd',
-  'aes': 'a',
+}
+const CIPHER = {
+  a: 'aes-256-cbc',
+  b: 'bf-cbc',
+  d: 'des-ede3-cbc',
 }
 const BLOCK_SIZE = {
-  'bf-cbc': 8,
-  'des-ede3-cbc': 8,
-  'aes-256-cbc': 16,
+  a: 16,
+  b: 8,
+  d: 8,
 }
-const KEY_LENGTH = {
-  'bf-cbc': 32,
-  'des-ede3-cbc': 24,
-  'aes-256-cbc': 32,
+const MINIMUM_KEY_LENGTH = {
+  a: 32,
+  b: 1,
+  d: 24,
+}
+const MAXIMUM_KEY_LENGTH = {
+  a: 32,
+  b: 56,
+  d: 24,
 }
 
 class EasyAes {
   constructor(spec) {
-    let algorithm = '';
+    let cipherId = '';
     let password = '';
     if (spec === undefined || typeof spec === 'string') {
       password = String(spec || EasyAes.getPasswordFromFile());
-      const cipherId = password[0];
-      if (!CIPHER.hasOwnProperty(cipherId)) {
-        throw new Error('Illegal Secret key specified. Try "$(npm bin)/easyaes --keygen"');
-      }
-      algorithm = CIPHER[cipherId];
-      password = password.substring(1, KEY_LENGTH[algorithm]+1);
+      cipherId = password[0];
     } else if (typeof spec === 'object') {
 	({algorithm,password} = spec);
     }
-    this._algorithm = algorithm;
+    const minLen = EasyAes.getMinimumKeyLength(cipherId);
+    const maxLen = EasyAes.getMaximumKeyLength(cipherId);
+    if ((password.length - 1) < minLen || (password.length - 1) > maxLen) {
+      throw new Error('Unexpected Secret key length. Try "$(npm bin)/easydes --keygen"');
+    }
+    password = password.substring(1, maxLen + 1);
+    this._cipherId = cipherId;
     this._password = password;
   }
 
@@ -53,12 +59,32 @@ class EasyAes {
     return CIPHER_ID[algorithm];
   }
 
-  static getKeyLength(algorithm) {
-    const cipherId = EasyAes.getCipherId(algorithm);
-    if (!cipherId) {
+  static getCipher(cipherId) {
+    if (!CIPHER.hasOwnProperty(cipherId)) {
+      return '';
+    }
+    return CIPHER[cipherId];
+  }
+
+  static getBlockSize(cipherId) {
+    if (!BLOCK_SIZE.hasOwnProperty(cipherId)) {
       return 0;
     }
-    return KEY_LENGTH[CIPHER[cipherId]];
+    return BLOCK_SIZE[cipherId];
+  }
+
+  static getMinimumKeyLength(cipherId) {
+    if (!MINIMUM_KEY_LENGTH.hasOwnProperty(cipherId)) {
+      return 0;
+    }
+    return MINIMUM_KEY_LENGTH[cipherId];
+  }
+
+  static getMaximumKeyLength(cipherId) {
+    if (!MAXIMUM_KEY_LENGTH.hasOwnProperty(cipherId)) {
+      return 0;
+    }
+    return MAXIMUM_KEY_LENGTH[cipherId];
   }
 
   static getPasswordFromFile(path) {
@@ -112,11 +138,10 @@ class EasyAes {
   }
 
   _encryptString(rawText) {
-    const blockSize = BLOCK_SIZE[this._algorithm];
-    const keyLength = KEY_LENGTH[this._algorithm];
+    const blockSize = EasyAes.getBlockSize(this._cipherId);
     let iv = crypto.randomBytes(blockSize);
-    let password = this._password.substring(0, keyLength);
-    let cipher = crypto.createCipheriv(this._algorithm, password, iv);
+    const algorithm = EasyAes.getCipher(this._cipherId);
+    let cipher = crypto.createCipheriv(algorithm, this._password, iv);
     let encrypted = cipher.update(rawText);
     encrypted = Buffer.concat([iv, encrypted, cipher.final()]);
     return this._base64Encode(encrypted);
@@ -131,10 +156,11 @@ class EasyAes {
     if (len < 16) {
       return cipherText;
     }
-    const blockSize = BLOCK_SIZE[this._algorithm]
+    const algorithm = EasyAes.getCipher(this._cipherId);
+    const blockSize = EasyAes.getBlockSize(this._cipherId);
     let iv = decoded.slice(0, blockSize);
     let encrypted = decoded.slice(blockSize, len - (len % blockSize));
-    let decipher = crypto.createDecipheriv(this._algorithm, this._password, iv);
+    let decipher = crypto.createDecipheriv(algorithm, this._password, iv);
     let decrypted;
     try {
       decrypted = decipher.update(encrypted);

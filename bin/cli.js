@@ -47,14 +47,14 @@ const getPasswordThenLoop = () => {
 };
 
 const generateKey = (algorithm) => {
-  const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%+,-./:=@^_~'
-  let keyLength = EasyAes.getKeyLength(algorithm);
-  if (keyLength == 0) {
-    algorithm = 'bf';
-    keyLength = EasyAes.getKeyLength(algorithm);
+  const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%+,-./:=@^_~';
+  let cipherId = EasyAes.getCipherId(algorithm);
+  if (!cipherId) {
+    cipherId = 'b';
   }
-  let key = EasyAes.getCipherId(algorithm);
-  let randomBytes = crypto.randomBytes(keyLength);
+  const keyLength = EasyAes.getMaximumKeyLength(cipherId);
+  let key = cipherId;
+  const randomBytes = crypto.randomBytes(keyLength);
   for (let i = 0; i < keyLength; i++) {
     key += pool[randomBytes[i] % pool.length];
   }
