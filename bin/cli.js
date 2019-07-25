@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 const yargs = require('yargs')
+      .alias('p', 'password')
       .alias('e', 'encrypt')
       .alias('d', 'decrypt')
+      .alias('t', 'type')
       .locale('en');
 const argv = yargs.argv;
 

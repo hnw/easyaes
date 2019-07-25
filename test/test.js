@@ -102,3 +102,11 @@ test('暗号化(3DES)', t => {
   t.regex(encrypted, /^[a-z0-9/+]{22}==$/i);
   t.is(cipher.decrypt(encrypted), 'abc');
 });
+
+test('キー長が長いもしくは短い', t => {
+  t.throws(() => new EasyAes('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'), /key length/);
+  t.throws(() => new EasyAes('dddddddddddddddddddddddd'), /key length/);
+  t.throws(() => new EasyAes('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'), /key length/);
+  t.throws(() => new EasyAes('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'), /key length/);
+  t.throws(() => new EasyAes('dddddddddddddddddddddddddd'), /key length/);
+});
