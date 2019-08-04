@@ -69,11 +69,17 @@ test('復号(object)', t => {
   });
 });
 
-test('復号できなかったら入力文字列を返す', t => {
+test('復号できなかったら同じ値を返す', t => {
   const cipher = new EasyAes('bbar');
+  t.is(cipher.decrypt(null), null);
+  t.is(cipher.decrypt(true), true);
+  t.is(cipher.decrypt(false), false);
+  t.is(cipher.decrypt(Date), Date);
   t.is(cipher.decrypt('foobar'), 'foobar');
   t.is(cipher.decrypt('Zm9vYmFyCg=='), 'Zm9vYmFyCg==');
   t.is(cipher.decrypt('MTIzNDU2Nzg5MGFiY2RlZgo='), 'MTIzNDU2Nzg5MGFiY2RlZgo=');
+  const v = [ {foo: 'bar'} ];
+  t.is(cipher.decrypt(v), v);
 });
 
 test('OpenSSLエラーで死なない', t => {
