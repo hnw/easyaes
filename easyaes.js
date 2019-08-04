@@ -98,7 +98,9 @@ class EasyAes {
   }
 
   encrypt(obj) {
-    if (typeof obj === "string") {
+    if (obj === null) {
+      return obj;
+    } else if (typeof obj === "string") {
       return this._encryptString(obj);
     } else if (Array.isArray(obj)) {
       return obj.map(text => this._encryptString(text));
@@ -110,7 +112,9 @@ class EasyAes {
   }
 
   decrypt(obj) {
-    if (typeof obj === "string") {
+    if (obj === null) {
+      return obj;
+    } else if (typeof obj === "string") {
       return this._decryptString(obj);
     } else if (Array.isArray(obj)) {
       return obj.map(text => this._decryptString(text));
