@@ -45,7 +45,7 @@ class EasyAes {
     const minLen = EasyAes.getMinimumKeyLength(cipherId);
     const maxLen = EasyAes.getMaximumKeyLength(cipherId);
     if ((password.length - 1) < minLen || (password.length - 1) > maxLen) {
-      throw new Error('Unexpected Secret key length. Try "$(npm bin)/easydes --keygen"');
+      throw new Error('Unexpected Secret key length. Try "$(npm bin)/easyaes --keygen > $HOME/.easyaes"');
     }
     password = password.substring(1, maxLen + 1);
     this._cipherId = cipherId;
