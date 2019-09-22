@@ -45,7 +45,7 @@ class EasyAes {
     const minLen = EasyAes.getMinimumKeyLength(cipherId);
     const maxLen = EasyAes.getMaximumKeyLength(cipherId);
     if ((password.length - 1) < minLen || (password.length - 1) > maxLen) {
-      throw new Error('Unexpected Secret key length. Try "$(npm bin)/easydes --keygen"');
+      throw new Error('Unexpected Secret key length. Try "$(npm bin)/easyaes --keygen > $HOME/.easyaes"');
     }
     password = password.substring(1, maxLen + 1);
     this._cipherId = cipherId;
@@ -97,42 +97,71 @@ class EasyAes {
     return password.trim();
   }
 
-  encrypt(obj) {
-    if (typeof obj === "string") {
+  encrypt(obj, depth = 10) {
+    if (depth < 0 || obj === null) {
+      return obj;
+    } else if (typeof obj === "string" || typeof obj === "number") {
       return this._encryptString(obj);
     } else if (Array.isArray(obj)) {
-      return obj.map(text => this._encryptString(text));
+      return this._encryptArray(obj, depth);
     } else if (typeof obj === "object") {
-      return this._encryptObject(obj);
+      return this._encryptObject(obj, depth);
     } else {
       return obj;
     }
   }
 
-  decrypt(obj) {
-    if (typeof obj === "string") {
+  decrypt(obj, depth = 10) {
+    if (depth < 0 || obj === null) {
+      return obj;
+    } else if (typeof obj === "string") {
       return this._decryptString(obj);
     } else if (Array.isArray(obj)) {
-      return obj.map(o => this.decrypt(o));
+      return this._decryptArray(obj, depth);
     } else if (typeof obj === "object") {
-      return this._decryptObject(obj);
+      return this._decryptObject(obj, depth);
     } else {
       return obj;
     }
   }
 
-  _encryptObject(obj) {
+  _encryptArray(arr, depth) {
+    const newDepth = depth - 1;
+    return arr.map(el => this.encrypt(el, newDepth));
+  }
+
+  _decryptArray(arr, depth) {
+    const newDepth = depth - 1;
+    const newArray = arr.map(el => this.decrypt(el, newDepth));
+    let modified = false;
+    if (arr.every((v,i) => v === newArray[i])) {
+      return arr;
+    }
+    return newArray;
+  }
+
+  _encryptObject(obj, depth) {
+    const newDepth = depth - 1;
     const newObj = {};
     for (let k of Object.keys(obj)) {
-      newObj[k] = this.encrypt(obj[k]);
+      newObj[k] = this.encrypt(obj[k], newDepth);
     }
     return newObj;
   }
 
-  _decryptObject(obj) {
-    const newObj = {}
+  _decryptObject(obj, depth) {
+    const newDepth = depth - 1;
+    const newObj = {};
+    let modified = false;
     for (let k of Object.keys(obj)) {
-      newObj[k] = this.decrypt(obj[k]);
+      const decrypted = this.decrypt(obj[k], newDepth);
+      newObj[k] = decrypted;
+      if (decrypted !== obj[k]) {
+        modified = true;
+      }
+    }
+    if (!modified) {
+      return obj;
     }
     return newObj;
   }
