@@ -113,7 +113,7 @@ class EasyAes {
     if (typeof obj === "string") {
       return this._decryptString(obj);
     } else if (Array.isArray(obj)) {
-      return obj.map(text => this._decryptString(text));
+      return obj.map(o => this.decrypt(o));
     } else if (typeof obj === "object") {
       return this._decryptObject(obj);
     } else {

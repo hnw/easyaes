@@ -44,9 +44,9 @@ test('復号(array)', t => {
   const cipher = new EasyAes('bfoobarbaz');
   t.deepEqual(cipher.decrypt([
     'ae+vjmOwtAsh5EPUY6Spuw==',
-    'cUiVkJR5U1cq2WPICzis9w==',
-    'Ao54RI5DDZvAJzNQIPhm6Q==',
-  ]), ['foo', 'bar', 'baz']);
+    [ 'cUiVkJR5U1cq2WPICzis9w==' ],
+    { baz: 'Ao54RI5DDZvAJzNQIPhm6Q==' },
+  ]), ['foo', [ 'bar' ], { baz: 'baz' }]);
 });
 
 test('復号(object)', t => {

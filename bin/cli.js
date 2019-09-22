@@ -52,7 +52,8 @@ const generateKey = (algorithm) => {
   const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%+,-./:=@^_~';
   let cipherId = EasyAes.getCipherId(algorithm);
   if (!cipherId) {
-    cipherId = 'b';
+    // type not specified or unknown type specified
+    cipherId = 'a'; // default type = AES
   }
   const keyLength = EasyAes.getMaximumKeyLength(cipherId);
   let key = cipherId;
