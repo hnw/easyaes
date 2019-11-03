@@ -6,7 +6,7 @@ Block cipher library for non-serious use
 
 Entering a raw password on the command line, in an environment variable, or in plain text can cause security issues.
 
-In order to prevent the secret leakage, we should use encrypted strings in all plain text, and decrypt passwords only when a raw password is required.
+In order to prevent the secret leakage from plain text (ex. shoulder hack), we should save encrypted strings in all storage, and decrypt passwords only when a raw password is required.
 
 `EasyAes` provides easy-to-use encryption/decription functions. This library allows you to use encrypted strings easily in configuration files, environment variables, and command line.
 
