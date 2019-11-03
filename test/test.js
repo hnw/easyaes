@@ -74,11 +74,12 @@ test('復号できなかったら同じ値を返す', t => {
   t.is(cipher.decrypt(null), null);
   t.is(cipher.decrypt(true), true);
   t.is(cipher.decrypt(false), false);
+  t.is(cipher.decrypt(123), 123);
   t.is(cipher.decrypt(Date), Date);
   t.is(cipher.decrypt('foobar'), 'foobar');
   t.is(cipher.decrypt('Zm9vYmFyCg=='), 'Zm9vYmFyCg==');
   t.is(cipher.decrypt('MTIzNDU2Nzg5MGFiY2RlZgo='), 'MTIzNDU2Nzg5MGFiY2RlZgo=');
-  const v = [ {foo: 'bar'} ];
+  const v = [ {foo: 'bar', baz: 123} ];
   t.is(cipher.decrypt(v), v);
 });
 
