@@ -73,7 +73,7 @@ if (argv.keygen) {
     rl.on("line", (str) => {
       console.log(str.replace(test, (_, p1, p2) => p1 + cipher.decrypt(p2)));
     });
-  } else if (argv.decrypt) {
+  } else if (argv.encrypt) {
     mutableStdout.muted = true;
     rl.on("line", (str) => {
       console.log(cipher.encrypt(str));
